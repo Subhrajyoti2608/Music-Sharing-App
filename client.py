@@ -2,9 +2,19 @@ import socket
 from threading import Thread
 from tkinter import *
 from tkinter import ttk
+import ftplib
+import os
+import time
+import ntpath #This is used to extract filename from path
+
 from tkinter import filedialog
+from pathlib import Path
 
-
+#import winsound
+#Uncomment the beow two line to use pygame to allow mp3 files as well
+from playsound import playsound
+import pygame
+from pygame import mixer
 
 PORT  = 8050
 IP_ADDRESS = '127.0.0.1'
@@ -14,13 +24,49 @@ BUFFER_SIZE = 4096
 name = None
 listbox =  None
 filePathLabel = None
+song_selected=None
 
 global song_counter
 song_counter = 0
 
+for file in os.listdir('shared_files'):
+    filename=os.fsdecode(file)
+    listbox.insert(song_counter, filename)
+    song_counter +=1
 
 
 
+def play():
+    global song_selected
+    song_selected=listbox.get(ANCHOR)
+    
+    pygame
+    mixer.init()
+    mixer.music.load('shared_files/'+song_selected)
+    mixer.music.play()
+    if(song_selected != ""):
+        infoLabel.configure(text="Now Playing: " +song_selected)
+    else:
+       infoLabel.configure(text="")
+
+def stop():
+    global song_selected
+    pygame
+    mixer.init()
+    mixer.music.load('shared_files/'+song_selected)
+    mixer.music.pause()
+    infoLabel.configure(text="")
+  
+
+   
+ 
+
+
+
+
+    
+        
+#Client GUI
 def musicWindow(): 
     global song_counter
     global filePathLabel
@@ -76,3 +122,9 @@ def setup():
 
 #Initiate Server Connection    
 setup()
+
+
+   
+
+
+
