@@ -31,10 +31,7 @@ song_selected=None
 global song_counter
 song_counter = 0
 
-for file in os.listdir('shared_files'):
-    filename=os.fsdecode(file)
-    listbox.insert(song_counter, filename)
-    song_counter +=1
+
 
 def browseFiles():
     global textarea
@@ -57,8 +54,42 @@ def browseFiles():
         ftp_server.dir()
         ftp_server.quit()
 
+        listbox.insert(song_counter, fname)
+        song_counter +=1
+
     except FileNotFoundError:
         print("Cancel buttton pressed")
+
+def download():
+
+    song_to_download = listbox.get(ANCHOR)
+    infoLabel.configure(text="Downloading "+song_to_download)
+    HOSTNAME="127.0.0.1"
+    USERNAME="lftpd"
+    PASSWORD="lftpd"
+    home = str(Path.home())
+    download_path=home+"Downloads"
+
+
+    ftp_server=FTP(HOSTNAME, USERNAME, PASSWORD)
+    ftp_server.encoding = "utf-8"
+    ftp_server.cwd("shared_files")
+
+    local_filename = os.path.join(download_path, song_to_download)
+    file = open(local_filename, 'wb')
+
+    ftp_server.retrbinary('RETR '+song_to_download, file.write)
+    ftp_server.dir()
+    file.close()
+    ftp_server.quit()
+
+    infoLabel.configure(text="Download Complete")
+    time.sleep(1)
+
+    if(song_selected != ""):
+        infoLabel.configure(text="Now Playing "+song_selected)
+    else:
+        infoLabel.configure(text="")
 
 
 def play():
@@ -115,6 +146,7 @@ def musicWindow():
     
     listbox = Listbox(window,height = 10,width = 39,activestyle = 'dotbox',bg='LightSkyBlue',borderwidth=2, font = ("Calibri",10))
     listbox.place(x=10,y=18)
+    
     for file in os.listdir('shared_files'):
         filename = os.fsdecode(file)
         listbox.insert(song_counter, filename)

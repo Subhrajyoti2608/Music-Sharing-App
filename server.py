@@ -77,8 +77,8 @@ def ftp():
 
 
 
-    setup_thread = Thread(target=setup)           #receiving multiple messages
-    setup_thread.start()
+setup_thread = Thread(target=setup)           #receiving multiple messages
+setup_thread.start()
 
 ftp_thread = Thread(target=ftp)
 ftp_thread.start()
